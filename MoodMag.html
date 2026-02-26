@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MoodMag</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html{
+scroll-behavior:smooth;
+}
+
+body{
+font-family:'Poppins',sans-serif;
+background:#fdf6f0;
+overflow-x:hidden;
+}
+
+/* COVER */
+.cover{
+height:100vh;
+background:url('group.jpg') center/cover no-repeat;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+color:white;
+text-align:center;
+position:relative;
+}
+
+.cover::after{
+content:"";
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.55);
+}
+
+.cover h1{
+font-family:'Playfair Display',serif;
+font-size:85px;
+letter-spacing:6px;
+z-index:1;
+animation:fadeDown 1.5s ease;
+}
+
+.cover p{
+z-index:1;
+margin-top:15px;
+font-size:20px;
+max-width:600px;
+animation:fadeUp 2s ease;
+}
+
+.scroll-btn{
+z-index:1;
+margin-top:40px;
+padding:14px 35px;
+border-radius:30px;
+background:white;
+color:black;
+cursor:pointer;
+transition:0.3s;
+font-weight:600;
+}
+
+.scroll-btn:hover{
+transform:scale(1.1);
+}
+
+/* MOOD SECTION */
+.moods{
+padding:100px 20px;
+text-align:center;
+}
+
+.moods h2{
+font-size:40px;
+margin-bottom:40px;
+font-family:'Playfair Display',serif;
+}
+
+.mood-btn{
+padding:15px 30px;
+margin:12px;
+border:none;
+border-radius:30px;
+font-size:18px;
+cursor:pointer;
+transition:0.3s;
+background:#ffd6d6;
+}
+
+.mood-btn:hover{
+transform:scale(1.15);
+background:#ffaaaa;
+}
+
+/* CONTENT */
+.content{
+padding:80px 10%;
+display:none;
+animation:fadeIn 1s ease;
+}
+
+.activity{
+display:flex;
+flex-wrap:wrap;
+margin-bottom:80px;
+align-items:center;
+gap:50px;
+}
+
+.activity-text{
+flex:1;
+min-width:280px;
+}
+
+.activity-text h3{
+font-size:30px;
+margin-bottom:15px;
+font-family:'Playfair Display',serif;
+}
+
+.activity-text p{
+line-height:1.8;
+font-size:16px;
+color:#333;
+}
+
+.images{
+flex:1;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+gap:15px;
+min-width:280px;
+}
+
+.images img{
+width:100%;
+border-radius:15px;
+transition:0.4s;
+box-shadow:0 5px 15px rgba(0,0,0,0.15);
+}
+
+.images img:hover{
+transform:scale(1.08);
+}
+
+/* ANIMATIONS */
+@keyframes fadeDown{
+from{opacity:0;transform:translateY(-30px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(30px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes fadeIn{
+from{opacity:0;}
+to{opacity:1;}
+}
+/* STRESS BUTTON */
+#stressBtn{
+position:fixed;
+bottom:30px;
+right:30px;
+padding:14px 25px;
+border:none;
+border-radius:40px;
+background:#ff6b81;
+color:white;
+font-weight:600;
+cursor:pointer;
+box-shadow:0 10px 25px rgba(112, 80, 4, 0.329);
+z-index:2000;
+transition:0.3s;
+}
+
+#stressBtn:hover{
+transform:scale(1.1);
+}
+
+/* BALLOONS */
+.balloon{
+position:fixed;
+bottom:-60px;
+width:35px;
+height:45px;
+border-radius:50%;
+z-index:1500;
+animation:floatRandom linear forwards;
+}
+
+@keyframes floatRandom{
+0%{
+transform:translate(0,0);
+opacity:1;
+}
+100%{
+transform:translate(var(--x-move), -120vh);
+opacity:0;
+}
+}
+/* BACK TO TOP BUTTON */
+/* BACK TO TOP BUTTON */
+#upBtn{
+position:fixed;
+bottom:30px;
+left:30px;
+padding:14px 22px;
+border:none;
+border-radius:40px;
+background:#222;
+color:white;
+font-weight:600;
+cursor:pointer;
+box-shadow:0 10px 25px rgba(0,0,0,0.25);
+z-index:2000;
+transition:0.4s;
+opacity:0;
+pointer-events:none;
+}
+
+#upBtn.show{
+opacity:1;
+pointer-events:auto;
+}
+
+#upBtn:hover{
+transform:scale(1.1);
+}
+</style>
+</head>
+
+<body>
+
+<!-- BACKGROUND MUSIC -->
+<audio id="bgMusic" loop>
+<source src="calm.mp3" type="audio/mpeg">
+</audio>
+
+<!-- COVER -->
+<section class="cover">
+<h1>MoodMag</h1>
+<p>Not every feeling needs fixing.  
+Some just need space, expression, and experience.</p>
+<div class="scroll-btn" onclick="smoothScrollToMood()">
+What's your mood? ↓
+</div>
+</section>
+
+<!-- MOODS -->
+<section class="moods" id="moodSection">
+<h2>How Are You Feeling Today?</h2>
+<button class="mood-btn" onclick="showMood('sad')">😔 Sad</button>
+<button class="mood-btn" onclick="showMood('stressed')">😰 Stressed</button>
+<button class="mood-btn" onclick="showMood('bored')">😴 Bored</button>
+<button class="mood-btn" onclick="showMood('happy')">😊 Happy</button>
+<button class="mood-btn" onclick="showMood('angry')">😡 Angry</button>
+</section>
+
+<section class="content" id="contentArea"></section>
+
+<script>
+
+/* SMOOTH SCROLL + MUSIC START */
+function smoothScrollToMood() {
+
+const music = document.getElementById("bgMusic");
+music.volume = 0.25;
+music.play();
+
+const target = document.getElementById("moodSection");
+const targetPosition = target.offsetTop;
+const startPosition = window.pageYOffset;
+const distance = targetPosition - startPosition;
+const duration = 1200;
+let start = null;
+
+function animation(currentTime){
+if(start === null) start = currentTime;
+const timeElapsed = currentTime - start;
+const run = ease(timeElapsed,startPosition,distance,duration);
+window.scrollTo(0,run);
+if(timeElapsed < duration) requestAnimationFrame(animation);
+}
+
+function ease(t,b,c,d){
+t/=d/2;
+if(t<1) return c/2*t*t + b;
+t--;
+return -c/2*(t*(t-2)-1)+b;
+}
+
+requestAnimationFrame(animation);
+}
+
+/* MOOD CONTENT */
+function showMood(mood){
+const content=document.getElementById("contentArea");
+content.style.display="block";
+content.innerHTML="";
+
+if(mood==="sad"){
+content.innerHTML+=createActivity(
+"Creative Healing – Clay & Art Therapy",
+"When sadness feels heavy, creativity becomes a safe outlet. Shaping clay, sketching your thoughts, or painting emotions allows your mind to gently process feelings. Art doesn’t demand perfection — it invites expression.",
+["clay1.jpg","clay2.jpg","paint1.jpg"]
+);
+
+content.innerHTML+=createActivity(
+"Nature Walk Reset",
+"A slow walk in the park restores emotional balance. Observe nature, breathe deeply, and let your thoughts settle naturally.",
+["walk1.jpg","walk2.jpg"]
+);
+}
+
+if(mood==="happy"){
+content.innerHTML+=createActivity(
+"Spread Happiness Through Action",
+"Participate in community cleaning, plant a tree, or contribute positively. Joy grows when shared.",
+["plant1.jpg","clean1.jpg"]
+);
+
+content.innerHTML+=createActivity(
+"Celebrate With Sports",
+"Cricket, volleyball, or football — energize your happiness through movement and teamwork.",
+["sport1.jpg","sport2.jpg","sport3.jpg"]
+);
+
+content.innerHTML+=createActivity(
+"Plan a Sudden Trip",
+"Spontaneity adds magic to happy moments. Even a short local adventure refreshes your spirit.",
+["trip1.jpg","trip2.jpg"]
+);
+}
+
+if(mood==="stressed"){
+content.innerHTML+=createActivity(
+"Yoga & Breath Alignment",
+"Gentle stretches and mindful breathing reduce cortisol levels and calm your nervous system.",
+["yoga1.jpg","yoga2.jpg"]
+);
+
+content.innerHTML+=createActivity(
+"Declutter Your Space",
+"Organizing your environment brings clarity to your mind. Small cleaning actions create mental peace.",
+["arrange1.jpg","arrange2.jpg"]
+);
+
+content.innerHTML+=createActivity(
+"Nourish With Smoothies",
+"A refreshing homemade smoothie is both calming and energizing.",
+["smoothie1.jpg","smoothie2.jpg"]
+);
+}
+
+if(mood==="bored"){
+content.innerHTML+=createActivity(
+"Origami & Creative Crafts",
+"Transform paper into art. Creative engagement removes monotony.",
+["origami1.jpg","origami2.jpg"]
+);
+
+content.innerHTML+=createActivity(
+"Cooking & Baking Exploration",
+"Try something new in the kitchen — baking, smoothies, or Chinese cuisine.",
+["cook1.jpg","cook2.jpg"]
+);
+
+content.innerHTML+=createActivity(
+"Photography Walk",
+"Capture colors, textures, and everyday beauty.",
+["photo1.jpg","photo2.jpg"]
+);
+}
+
+if(mood==="angry"){
+content.innerHTML+=createActivity(
+"Channel Energy Into Sports",
+"Release frustration physically through active sports.",
+["angry1.jpg","angry2.jpg"]
+);
+
+content.innerHTML+=createActivity(
+"Game & Release",
+"Play video games with friends and convert irritation into fun.",
+["game1.jpg","game2.jpg"]
+);
+}
+setTimeout(() => {
+    document.getElementById("contentArea").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}, 100);
+document.getElementById("upBtn").classList.add("show");
+}
+
+function createActivity(title,desc,images){
+let imgHTML="";
+images.forEach(img=>{
+imgHTML+=`<img src="${img}" alt="">`;
+});
+
+return `
+<div class="activity">
+<div class="activity-text">
+<h3>${title}</h3>
+<p>${desc}</p>
+</div>
+<div class="images">
+${imgHTML}
+</div>
+</div>
+`;
+}
+function releaseStress(){
+
+for(let i=0;i<25;i++){
+
+let balloon=document.createElement("div");
+balloon.classList.add("balloon");
+
+// random horizontal start position
+balloon.style.left=Math.random()*100+"vw";
+
+// random color
+const colors=["#ff6b81","#feca57","#1dd1a1","#54a0ff","#ff9ff3","#a29bfe"];
+balloon.style.background=colors[Math.floor(Math.random()*colors.length)];
+
+// random size
+let size=25+Math.random()*25;
+balloon.style.width=size+"px";
+balloon.style.height=size*1.2+"px";
+
+// random floating duration (slow)
+balloon.style.animationDuration=(3.5+Math.random()*2.5)+"s";
+// random horizontal drift
+let randomX=(Math.random()*200-100)+"px";
+balloon.style.setProperty("--x-move",randomX);
+
+document.body.appendChild(balloon);
+
+setTimeout(()=>{
+balloon.remove();
+},11000);
+
+}
+}
+function scrollToTop(){
+
+document.querySelector(".cover").scrollIntoView({
+behavior:"smooth"
+});
+
+document.getElementById("upBtn").classList.remove("show");
+}
+</script>
+<button id="stressBtn" onclick="releaseStress()">
+Release Your Stress 🎈
+</button>
+<button id="upBtn" onclick="scrollToTop()">
+Want to Choose your Mood Again?
+</button>
+</body>
+</html>
